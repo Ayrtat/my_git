@@ -1,0 +1,1 @@
+cmd_/home/khalif666/Documents/MyCPrograms/usb_example/JoyStick.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/khalif666/Documents/MyCPrograms/usb_example/JoyStick.ko /home/khalif666/Documents/MyCPrograms/usb_example/JoyStick.o /home/khalif666/Documents/MyCPrograms/usb_example/JoyStick.mod.o ;  true

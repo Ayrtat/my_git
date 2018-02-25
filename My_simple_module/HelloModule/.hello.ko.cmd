@@ -1,0 +1,1 @@
+cmd_/home/khalif666/Documents/MyCPrograms/HelloModule/hello.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/khalif666/Documents/MyCPrograms/HelloModule/hello.ko /home/khalif666/Documents/MyCPrograms/HelloModule/hello.o /home/khalif666/Documents/MyCPrograms/HelloModule/hello.mod.o ;  true

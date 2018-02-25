@@ -1,0 +1,208 @@
+#include <linux/module.h>
+#include <linux/moduleparam.h>
+
+#include <linux/kernel.h>	/* printk(), min() */
+#include <linux/slab.h>		/* kmalloc() */
+#include <linux/fs.h>		/* everything... */
+#include <linux/proc_fs.h>
+#include <linux/errno.h>	/* error codes */
+#include <linux/types.h>	/* size_t */
+#include <linux/fcntl.h>
+#include <linux/poll.h>
+#include <linux/cdev.h>
+#include <asm/uaccess.h>
+#include <linux/sched.h>
+#include <linux/seq_file.h>
+
+#define minor_first 0
+#define minor_count 256
+#define major 0
+#define name "my_first_chrdev"
+#define BUFFER_SIZE 256
+
+ssize_t dev_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos);
+ssize_t dev_write(struct file *filp, char __user *buf, size_t count, loff_t *f_pos);
+static int dev_open(struct inode * inode, struct file * filp);
+static int dev_release(struct inode * inode, struct file * filp);
+
+struct buffer {
+	int head;
+	int tail;
+	int length;
+	char * buf;
+};
+
+
+static struct my_fdevice {
+  wait_queue_head_t inq, outq;
+  struct semaphore sem;
+  struct cdev cdev;
+  struct buffer * cbuf;
+  int open;
+};
+
+static struct my_fdevice device;
+
+static const struct file_operations dev_fops = { 
+   .owner = THIS_MODULE, 
+   .open = dev_open, 
+   .release = dev_release, 
+   .read  = dev_read, 
+   .write = dev_write,
+}; 
+
+static int dev_open(struct inode * inode, struct file * filp) { 
+	struct my_fdevice *dvc;
+	dvc = container_of(inode->i_cdev, struct my_fdevice, cdev);
+	device.open++;
+
+	return EOK;
+}
+
+static int dev_release(struct inode * inode, struct file * filp) {
+	return EOK;
+}
+
+static int data_size = -1;
+
+ssize_t dev_write(struct file *filp, char __user *buf, size_t count, loff_t *f_pos) {
+	struct buffer * pBuf;
+	char * elem;
+	elem = kmalloc(sizeof(char), GFP_KERNEL);
+	if(!elem) printk ("FFFFFUUUUUUUCK\n");
+	pBuf = device->cbuf;
+	if (down_interruptible(&device->sem))
+		return -ERESTARTSYS;
+	data_size = count;
+	while (data_size >= 0) {
+		if(pBuf->length < BUFFER_SIZE)
+		{
+			if (copy_from_user(elem, buf, 1) {
+				up (&device->sem);
+				return -EFAULT;
+			}
+			pBuf->buf[pBuf->tail]=elem;
+			pBuf->lentgh++;
+			if(pBuf->tail == (BUFFER_SIZE - 1)) {
+				pBuf->tail = 0;
+			}
+			else 
+				pBuf->tail++;
+			data_size--;
+		}
+		else {
+			up (&device->sem);
+			wake_up_interruptible(device->outq);
+			if (wait_event_interruptible(device->inq, (pBuf->length < BUFFER_SIZE))
+				return -ERESTARTSYS;
+			if(down_interruptible(&device->sem))
+				return -ERESTARTSYS;
+		}
+	}
+	kfree(elem);
+	return EOK;		
+}
+
+ssize_t dev_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos) {
+	struct buffer * pBuf;
+	char * elem;
+	elem = kmalloc(sizeof(char), GFP_KERNEL);
+	if(!elem) printk ("FFFFFUUUUUUUCK\n");
+	pBuf = device->cbuf;
+	if (down_interruptible(&device->sem))
+		return -ERESTARTSYS;
+	if (data_size == -1) {
+		up(&device->sem);
+		if(wait_event_interruptible(device->outq, data_size > -1))
+			return -ERESTARTSYS;
+		if(down_interruptible(&device->sem))
+			return -ERESTARTSYS;
+	}
+	while (data_size >= 0) {
+		if(pBuf->length != 0) {
+			elem = pBuf->buf[pBuf->head];
+			if (copy_to_user(buf, elem, 1) {
+				up (&device->sem);
+				return -EFAULT;
+			}
+			pBuf->length--;
+			if(pBuf->head==(NUMBER_OF_ELEMS-1))
+           			 pBuf->head=0;
+        		else
+            			 pBuf->head++;
+		}
+		else {
+			up(&device->sem);
+			wake_up_interruptible(device->inq);
+			if (wait_event_interruptible(device->outq, (pBuf->length != 0))
+				return -ERESTARTSYS;
+			if(down_interruptible(&device->sem))
+				return -ERESTARTSYS;
+		}
+	}
+	kfree(elem);
+	return EOK;	
+}
+
+static int __init chd_init(void) {
+   dev_t dev;
+   device.open = 0;
+   int res_of_reg = -1;
+   if(major) { /* Выдан в качестве переданного параметра в модуль */
+	dev = MKDEV(major,minor_first);
+	res_of_reg = register_chrdev_region(dev,minor_count,name);
+   }
+   else {
+	res_of_reg = alloc_chrdev_region(&dev, minor_first, minor_count, name);
+	major = MAJOR(dev); /*Динамическое выделение */
+   }
+   if (res_of_reg < 0) {
+	printk(KERN_ERR "ERROR:kernel doesn't register this device\n");
+	goto err;
+   }	
+   cdev_init(&(device->cdev),&dev_fops);
+     /* Надо сказать ядру, что я хочу зарегистрировать символьное 
+      устройство, после успешной регистрации номера в dev,
+      возвращается первый номер отреагировавшего устройства */
+
+   (device->cdev).owner = THIS_MODULE;
+   (device->cdev).ops = &dev_fops;
+   res_of_reg = cdev_add(&(device->cdev), dev, minor_count);
+   if (res_of_reg < 0) {
+	printk(KERN_ERR "ERROR:kernel doesn't register this chdevice\n");
+	goto err;
+   }
+   sema_init(&(device->sem),1);
+   device->cbuf = kmalloc(sizeof(buffer), GFP_KERNEL);
+   if(!(device->cbuf)) {
+	res_of_reg = -1;
+	printk(KERN_ERR "ERROR: struct type buffer\n");
+	goto err;
+   }
+   (device->cbuf)->buf = kmalloc(BUFFER_SIZE * sizeof(char), GFP_KERNEL);
+   if(!((device->cbuf)->buf)) {
+	res_of_reg = -1;
+	printk(KERN_ERR "ERROR: char buffer (struct)\n");
+	goto err;
+   }
+   (device->cbuf).head = 0;
+   (device->cbuf).tail = 0;
+   (device->cbuf).length = 0;
+   init_waitqueue_head(&device.inq);
+   init_waitqueue_head(&device.outq);
+err:
+   return res_of_reg;
+}
+
+static void __exit my_device_exit(void)
+{
+    sema_destroy(&(device->sem));
+    kfree(device->cbuf->buf);
+    kfree(device->cbuf);
+    cdev_del(device->cdev);
+    printk(KERN_ALERT "Goodbye, cruel world\n");
+}
+
+module_init(hello_init);
+module_exit(hello_exit);
+
