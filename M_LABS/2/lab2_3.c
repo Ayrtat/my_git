@@ -8,6 +8,7 @@
 
 int main(void) {
  int status;
+ int a=0,b=0,c=6;
  pid_t pid, ch_pid;
  
  switch(pid=fork()) {

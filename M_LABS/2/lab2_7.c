@@ -8,6 +8,7 @@
 
 int main(void) {
  int status;
+ char b[4];
  pid_t pid, ch_pid;
  
  switch(pid=fork()) {
@@ -18,8 +19,16 @@ int main(void) {
    	printf("\nCHILD: This is child process!\n");
    	printf("CHILD: My PID is-- %d\n", getpid());
    	printf("CHILD: My parent PID -- %d\n", getppid());
-	setpgrp(); /*Modifies group id. Therefore, when user press
+	printf("CHILD: My GID is -- %d\n", getpgid(getpid()));
+	printf("CHILD: My SID is -- %d\n", getsid(getpid()));
+	int k = setpgid(getpid(),getpid()); 
+/*Modifies group id. Therefore, when user press
 		     Cn+C, ChPr can't die*/
+	printf("BEFORE SETPGRP CHILD: My GID is -- %d\n", getpgid(getpid()));
+	printf("BEFORE SETPGRP CHILD: My SID is -- %d\n", getsid(getpid()));
+	read(0,b,4);
+	perror("ERROR:");
+	//printf("b: %s\n",b);
 	pause();
    	exit(0);
   default:
@@ -27,6 +36,8 @@ int main(void) {
         printf("PARENT: My PID -- %d\n", getpid());
         printf("PARENT: My child PID %d\n",pid);
    	printf("PARENT: My parent PID %d\n",getppid());
+	printf("PARENT: My GID %d\n",getpgid(getpid()));
+	printf("PARENT: My SID %d\n",getsid(getpid()));
 	pause();
    	exit(0);
  }
