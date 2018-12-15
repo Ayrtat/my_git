@@ -86,10 +86,9 @@ int main() {
 
 	while(1) {
 			memset(buf, '\0', sizeof(buf));
-			alarm(4);
 			n = recvfrom(sockfd, buf, BUFFSIZE, 0,
 				(struct sockaddr *)&serv_addr, &caddrlen);
-			alarm(0);
+			if(n < BUFFSIZE) exit(0);
 		/*Выдача*/
 			write(fd, buf, n);
 	}
