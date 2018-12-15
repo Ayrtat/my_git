@@ -169,10 +169,10 @@ int main(int argc, char **argv) {
 						/*The message is owned by current process*/
 						if(strcmp(addr.sun_path, clnt_addr.sun_path) == 0) {
 							memset(buf, '\0', sizeof(buf));
-							alarm(4);
+							
 							nbytes = recvfrom(sockfd, buf, BUFFSIZE, 0,//MSG_DONTWAIT,
 								(struct sockaddr *)&addr, &caddrlen);
-							alarm(0);
+							if(nbytes < BUFFSIZE) exit(0);
 							
 						/*Writing*/
 							write(fd, buf, nbytes);
