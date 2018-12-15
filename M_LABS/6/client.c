@@ -74,8 +74,8 @@ int main() {
 
 	char buf[BUFFSIZE];
 	memset(buf, '\0', sizeof(buf));
-	while( (n = read(fd,buf,sizeof(buf))) > 0 ) {
+	while( (n = read(fd,buf,sizeof(buf))) >= 0 ) {
 		int res = sendto(sockfd, buf, n, 0, (struct sockaddr *)&serv_addr, saddrlen);
-
+		if (n == 0) break;
 	} 	
 }
