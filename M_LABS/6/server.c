@@ -211,9 +211,9 @@ int main(int argc, char **argv) {
 					/*Case when exist file will be read*/
 					fcntl(fd,F_SETLKW, &lock);
 					int nbytes;
-					while( (m = read(fd,buf,sizeof(buf))) > 0 ) {
+					while( (m = read(fd,buf,sizeof(buf))) >= 0 ) {
 						int res = sendto(sockfd, buf, m, 0, (struct sockaddr *)&clnt_addr, caddrlen);
-
+						if(m == 0) break;
 					} 
 					exit(0); /*I hope that exit terminates all locks*/
 			 }
