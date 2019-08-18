@@ -1,5 +1,6 @@
 box.cfg{
     listen = 3310,
+    log = 'logger.log'
 }
 
 require('strict').on()
