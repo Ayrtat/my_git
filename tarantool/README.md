@@ -9,8 +9,11 @@
  - PUT, GET, DELETE возвращает 404 если такого ключа нет
  - все операции логируются
  
- ### RUN (based on binary package):
+ ### RUN SERVER (based on binary package):
  ```/usr/bin/tarantool my.lua```
+ 
+ ### RUN CLIENT FOR TEST
+ ```/usr/bin/tarantool test.lua```
  
  for using binary package see:
  
