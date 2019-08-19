@@ -17,12 +17,12 @@
  
  All results will be stored in ```logger.log``` file
  
-###FOR REMOTE CONNECTION ```mcs.mail.ru``` WAS USED
+### FOR REMOTE CONNECTION ```mcs.mail.ru``` WAS USED
  
 A virtual machine has been created with ```tarantool package```. After a server has been run:
 
 ```tarantoolctl start /etc/tarantool/instances.enabled/my.lua```
 
-#To connect to server:
+# To connect to server:
 
 ```http://85.192.33.85:8080/```
