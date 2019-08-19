@@ -26,3 +26,11 @@ A virtual machine has been created with ```tarantool package```. After a server 
 # To connect to server:
 
 ```http://85.192.33.85:8080/```
+
+# ====================================================================
+## YOU CAN CHECK WORK OF THE SERVER
+# ====================================================================
+1. Open ```https://reqbin.com/```
+2. For POST choose ```POST``` option, fill the URL with ```http://85.192.33.85:8080/kv``` and the body with ```{"key":"tessstooo", "value":"666"}``` (as for example)
+3. For GET choose ```GET``` option. fill the URL with ```http://85.192.33.85:8080/kv/tessstooo``` leaving the body empty
+4. so one
