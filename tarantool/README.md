@@ -9,14 +9,10 @@
  - PUT, GET, DELETE возвращает 404 если такого ключа нет
  - все операции логируются
  
- ### RUN SERVER (based on binary package):
+ RUN SERVER LOCALLY (based on binary package):
  ```/usr/bin/tarantool my.lua```
  
- ### RUN CLIENT FOR TEST
- ```/usr/bin/tarantool test.lua```
+ RUN CLIENT LOCCALY FOR TEST
+```/usr/bin/tarantool test.lua```
  
- for using binary package see:
- 
- ```https://www.tarantool.io/en/download/os-installation/1.10/ubuntu/```
- 
- ### All results will be stored in ```logger.log``` file
+ All results will be stored in ```logger.log``` file
