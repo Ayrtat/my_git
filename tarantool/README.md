@@ -15,7 +15,7 @@
  RUN CLIENT LOCCALY FOR TEST
 ```/usr/bin/tarantool test.lua```
  
- All results will be stored in ```logger.log``` file
+ All results will be stored in ```cat /var/log/tarantool/my.log``` file
  
 ### FOR REMOTE CONNECTION ```mcs.mail.ru``` WAS USED
  
