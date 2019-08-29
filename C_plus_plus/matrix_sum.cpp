@@ -9,9 +9,9 @@ using namespace std;
 
 class Matrix {
 private:
+public:
 	vector <vector <int>> M;
 	int num_r, num_c;
-public:
 	Matrix();
 	Matrix(int num_rows, int num_cols);
 	void Reset(int num_rowr, int num_cols);
@@ -24,16 +24,7 @@ public:
 
 Matrix::Matrix() { num_r = num_c = 0; }
 Matrix::Matrix(int num_rows, int num_cols) {
-	if (num_rows < 0 || num_cols < 0) throw std::out_of_range("out");
-
-	num_r = num_rows;
-	num_c = num_cols;
-
-	if(num_r == 0 || num_c == 0) return;
-
-	for(int i = 0; i < num_rows; i++) {
-		M.push_back(vector<int> (num_cols,0));	
-	}
+	Reset(num_rows, num_cols);
 }
 
 int Matrix::GetNumRows() const {
@@ -76,9 +67,8 @@ int& Matrix::At(int num_rows, int num_cols) {
 }
 
 istream& operator>> (istream &i, Matrix &m) {
-
 	string put;
-	getline(cin, put);
+	getline(i, put);
 	if(put.empty()) return cin;
 
 	istringstream sizes; 
@@ -92,9 +82,9 @@ istream& operator>> (istream &i, Matrix &m) {
 	}
 
 	sizes.clear();
-	sizes.str(put);	
+	sizes.str(put);
 
-	if(quant != 2) throw std::invalid_argument ("invalid argument");	
+	if(quant != 2) throw std::invalid_argument ("invalid argument#1");	
 	int r = 0, c = 0;
 	sizes >> r;
 	sizes >> c;
@@ -108,8 +98,8 @@ istream& operator>> (istream &i, Matrix &m) {
 	int put_value;
 
 
-	while (getline(cin, put)) {
-		//if(put.empty()) break;
+	while (getline(i, put)) {
+		
 		istringstream line(put);
 		cj = 0;
 		while (line >> put_value) {
@@ -121,23 +111,22 @@ istream& operator>> (istream &i, Matrix &m) {
 		put.clear();
 	}
 
-	return cin;
+	return i;
 }
 
-ostream& operator<<(ostream &i, Matrix m) {
-	i << m.GetNumRows() << " " << m.GetNumColumns() << "\n";
+ostream& operator<<(ostream &o, Matrix m) {
+	o << m.GetNumRows() << " " << m.GetNumColumns() << "\n";
 
 	for (int i = 0; i < m.GetNumRows(); i++) {
 		for (int j = 0; j < m.GetNumColumns(); j++) {
-			cout << m.At(i, j) << " ";
+			o << m.At(i, j) << " ";
 		}
-		cout << "\n";
+		o << "\n";
 	}
-	return cout;
+	return o;
 }
 
 bool operator== (Matrix a, Matrix b) {
-	
 	if(a.empty() && b.empty()) return true;
 
 	if (a.GetNumRows() == b.GetNumRows() && a.GetNumColumns() == b.GetNumColumns()) {
@@ -171,9 +160,11 @@ Matrix operator+ (Matrix a, Matrix b) {
 
 int main() {
 	Matrix one;
-	Matrix two;
+	Matrix two(3,2);
 
-	cin >> one >> two;
-	cout << one + two << endl;
+	
+
+	cin >> one; //>> two;
+	cout << one << endl;
 	return 0;
 }
