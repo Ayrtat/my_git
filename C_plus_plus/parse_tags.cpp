@@ -11,10 +11,6 @@ using namespace std;
 
 #define ERROR cout << "finite machine has gotten wrong state!\n"; exit(1);
 
-
-
-
-
 string analize(string str) {
 	istringstream proc(str);
 	string result, temp;
