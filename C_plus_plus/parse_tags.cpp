@@ -4,6 +4,14 @@
 #include <vector>
 #include <algorithm>
 
+/*This program is the solve of 
+ https://www.hackerrank.com/challenges/attribute-parser/problem
+ 
+ Program gets 4/6 success cases, may be because I don't make additional checks that tags corresond to each other
+ 
+ The program uses a finite machine*/
+
+
 using namespace std;
 
 #define ERROR cout << "finite machine has gotten wrong state!\n"; exit(1);
