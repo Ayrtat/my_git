@@ -1,22 +1,22 @@
-
 #include <iostream>
 #include <string>
 #include <sstream>
 
 using namespace std;
 
-struct ids {/*stack*/
+struct ids {
 	string id;
 	string c;
 	ids *prev;
 };
 
-struct list_t {
+struct list_t { /*List of countries; each country
+		  contains of ID and number of the ID*/
 	string country;
 	ids *id;
 	list_t *next;
 };
-//if its new node
+
 list_t *add(list_t *last, string country, string id, string c) {
 	list_t *foradd;
 	
@@ -106,9 +106,6 @@ void stat(list_t *head) {
 }
 
 int main() {
-	list_t *main = NULL; /*Overlapped name*/
-	list_t *last = main; /*For now last is head*/
-
 	string input;
 	while (getline(cin, input)) {
 		if (!input.size()) {
@@ -122,8 +119,6 @@ int main() {
 		for (; *it != ';'; it++);
 		string count_s(jt, it);
 		string country(it + 1, input.end());
-
-	//	cout << "input: " << country << " " << id_s << " " << count_s << endl;
 
 		if (main == NULL) {
 			main = new list_t;
