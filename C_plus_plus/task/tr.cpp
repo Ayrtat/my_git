@@ -106,6 +106,8 @@ void stat(list_t *head) {
 }
 
 int main() {
+	list_t *main = NULL;
+	list_t *last = main;
 	string input;
 	while (getline(cin, input)) {
 		if (!input.size()) {
@@ -113,10 +115,22 @@ int main() {
 		} 
 		auto it = input.begin();
 		auto jt = it;
-		for (; *it != ';'; it++);
+
+		for(; it != input.end(); it++) {
+			if(*it == ';') break;
+		}
+
+		if(it == input.end()) continue;
+
 		string id_s(jt, it++);
 		jt = it;
-		for (; *it != ';'; it++);
+
+		for(; it != input.end(); it++) {
+			if(*it == ';') break;
+		}
+
+		if(it == input.end() || it+1 == input.end()) continue;
+
 		string count_s(jt, it);
 		string country(it + 1, input.end());
 
