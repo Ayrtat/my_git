@@ -1,0 +1,7 @@
+12121;2;Russia
+121;3;Ukraine
+2123;2;Russia
+21213;4;Belarus
+2121;42;Russia
+1212;1;Russia
+666;7;Ukraine
