@@ -134,6 +134,10 @@ int main() {
 		string count_s(jt, it);
 		string country(it + 1, input.end());
 
+		bool wrong_country_name = false;
+		for(auto i : country) { if(i == ';') wrong_country_name = true; }
+		if(wrong_country_name) continue;
+
 		if (main == NULL) {
 			main = new list_t;
 			main->country.clear();
