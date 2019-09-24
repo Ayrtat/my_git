@@ -3,8 +3,12 @@
    some consequence of byte), but it's neccessary to 
    transoform these bytes to readable buttons on using
    input_dev */
+
+/* PLEASE REMEMBER THAT TO TRY YOUR OWN MODULE YOU HAVE TO
+   TO TURN OFF USBHID MODULE BY rmmod usbhid, ELSE 
+   YOU WILLN'T BE ABLE TO INSTALL YOUR MODULE*/
    
-   #include <linux/kernel.h>
+#include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
 #include <linux/module.h>
