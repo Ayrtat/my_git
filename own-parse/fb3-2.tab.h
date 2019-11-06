@@ -51,15 +51,17 @@ extern int yydebug;
     PMET = 261,
     MMET = 262,
     FLAG = 263,
-    EOL = 264,
-    IF = 265,
-    THEN = 266,
-    ELSE = 267,
-    WHILE = 268,
-    DO = 269,
-    LET = 270,
-    CMP = 271,
-    UMINUS = 272
+    AGG = 264,
+    FUNCNUM = 265,
+    EOL = 266,
+    IF = 267,
+    THEN = 268,
+    ELSE = 269,
+    WHILE = 270,
+    DO = 271,
+    LET = 272,
+    CMP = 273,
+    UMINUS = 274
   };
 #endif
 
@@ -76,7 +78,7 @@ union YYSTYPE
   struct symlist *sl;
   int fn;			/* which function */
 
-#line 80 "fb3-2.tab.h" /* yacc.c:1909  */
+#line 82 "fb3-2.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

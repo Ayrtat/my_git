@@ -27,6 +27,8 @@
 %token <fn> PMET
 %token <fn> MMET
 %token <fn> FLAG
+%token <fn> AGG
+%token <fn> FUNCNUM
 %token EOL
 
 %token IF THEN ELSE WHILE DO LET
@@ -53,11 +55,12 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | exp '/' exp          { $$ = newast('/', $1,$3); }
    | exp ':' exp          { $$ = newast(':', $1,$3); }
    | '|' exp              { $$ = newast('|', $2, NULL); }
- //  | explist      	  { $$ = $1; }	
-   | '{' explist '}'	  { $$ = $2; }
-   | '(' explist ')'	  { $$ = $2; }
+   | AGG '(' '{' exp '}' ',' exp '(' exp ')'')'{ $$ = newaggnode('A',$4,$7,$9); }
+   //| '{' explist '}'	  { $$ = $2; }
+  // | '(' explist ')'	  { $$ = $2; }
    | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
    | NUMBER               { $$ = newnum($1); }
+   | FUNCNUM		  { $$ = newfnum($1); }
    | FUNC '(' explist ')' { $$ = newfunc($1, $3); }
    | NAME                 { $$ = newref($1); }
    | NAME '=' exp         { $$ = newasgn($1, $3); }

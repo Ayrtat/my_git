@@ -17,14 +17,23 @@ EXP	([Ee][-+]?[0-9]+)
 
 %%
 
-"AGG"    	{ yylval.fn = B_agg; return FUNC; }
+"AGG"    	{ yylval.fn = B_agg; return AGG; }
+
 "MOVING" 	{ yylval.fn = B_mov; return FUNC; }
 "SUM"           { yylval.fn = B_sum; return FUNC; }
 
+"MIN"           { yylval.fn = F_min; return FUNCNUM; }
+"MAX"	  	{ yylval.fn = F_max; return FUNCNUM; }
+    /* AGG({Объем},MIN(Объем)) 
+       AGG({КодИнстр},MAX(Объем)) 
+       AGG({Объем},MAX(КодИнстр)) 
+   */
 
-"Инстр"	        { yylval.fn = M_pre; return MMET; }
-"КодИнстр"      { yylval.fn = M_met; return MMET; }
-"Режим"          { yylval.fn = M_met; return MMET; }
+"Инстр"	        { yylval.fn = M_instr; return MMET; }
+"КодИнстр"      { yylval.fn = M_codeinstr; return MMET; }
+"Режим"          { yylval.fn = M_mode; return MMET; }
+"Сделка"        { yylval.fn = M_deal; return MMET; }
+"Объем"         { yylval.fn = M_Qty; return MMET; }
 
 
 "СРЕДНЕЕ"       { yylval.fn = F_avg; return FLAG; }

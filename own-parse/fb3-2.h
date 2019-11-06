@@ -55,7 +55,14 @@ enum bifs {			/* built-in functions */
   B_sum,
   M_pre,
   M_met,
-  F_avg
+  F_avg,
+  M_instr,
+  M_codeinstr,
+  M_mode,
+  M_deal,
+  M_Qty,
+  F_min,
+  F_max
 };
 
 /* nodes in the Abstract Syntax Tree */
@@ -65,6 +72,13 @@ struct ast {
   int nodetype;
   struct ast *l;
   struct ast *r;
+};
+
+struct agg {
+  int nodetype;
+  struct ast *l;
+  struct ast *r;
+  struct ast *funcnum;
 };
 
 struct explist {
@@ -125,8 +139,10 @@ struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newnum(double d);
 struct ast *newchr(char d);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+struct ast *newaggnode(int nodetype, struct ast *group, struct ast *funcnum, struct ast *param);
 struct ast *newmtr(double d);
 struct ast *newflg(double d);
+struct ast *newfnum(double d);
 
 /* define a function */
 void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);

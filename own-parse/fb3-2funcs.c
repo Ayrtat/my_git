@@ -65,6 +65,7 @@ newast(int nodetype, struct ast *l, struct ast *r)
   a->nodetype = nodetype;
   a->l = l;
   a->r = r;
+  printf("%c\n",nodetype);
   return a;
 }
 
@@ -82,6 +83,7 @@ newexplist(int nodetype, struct ast *l, struct ast *r, char brace)
   a->r = r;
   a->brace = brace;
   
+  
   return a;
 }
 
@@ -96,6 +98,24 @@ newnum(double d)
   }
   a->nodetype = 'K';
   a->number = d;
+  printf("numval %f\n", d);
+  return (struct ast *)a;
+}
+
+struct ast *
+newaggnode(int nodetype, struct ast *group, struct ast *funcnum, struct ast *param)
+{
+   struct agg *a = malloc(sizeof(struct agg));
+
+   if(!a) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  a->nodetype = nodetype;
+  a->l        = group;
+  a->r 	      = param;
+  a->funcnum  = funcnum;
   return (struct ast *)a;
 }
 
@@ -125,8 +145,25 @@ newmtr(double d)
   }
   a->nodetype = 'm';
   a->number = d;
+  printf("newmtr %f\n", d);
   return (struct ast *)a;
 }
+
+struct ast *
+newfnum(double d)
+{
+  struct numval *a = malloc(sizeof(struct numval));
+
+  if(!a) {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = 'j';
+  a->number = d;
+  printf("fnum %f\n", d);
+  return (struct ast *)a;
+}
+
 
 struct ast *
 newflg(double d)
@@ -270,12 +307,14 @@ dodef(struct symbol *name, struct symlist *syms, struct ast *func)
 
 static double callbuiltin(struct fncall *);
 static double calluser(struct ufncall *);
+static void print_metrica(struct numval *a);
+static void callaggfunc(struct agg *a);
+static void print_func(struct numval *a);
 
 double
 eval(struct ast *a)
 {
   double v;
-
   if(!a) {
     yyerror("internal error, null eval");
     return 0.0;
@@ -300,7 +339,7 @@ eval(struct ast *a)
   case '/': 	    eval(a->l); printf("/"); eval(a->r); break;
   case '|':         fabs(eval(a->l)); break;
   case 'M': v = -eval(a->l); break;
-  case ':': 	    eval(a->l); printf(":"); eval(a->r); break;
+  case ':': 	    eval(a->l); eval(a->r); break;
 
     /* comparisons */
   case '1': v = (eval(a->l) > eval(a->r))? 1 : 0; break;
@@ -342,14 +381,30 @@ eval(struct ast *a)
 
   case 'C': v = calluser((struct ufncall *)a); break;
 
-  case 'm': printf("metrica"); break;
+  case 'm': print_metrica((struct numval *)a); break;
 
   case 'Q': printf("flag");    break;
 
+  case 'A': callaggfunc((struct agg *)a); break;
 
   default: printf("internal error: bad node %c\n", a->nodetype);
   }
   return v;
+}
+
+static void
+print_metrica(struct numval *a)
+{
+   switch((int)a->number) {
+     case M_codeinstr:
+	printf("((CsecurityNgcb*)((CTransaction*)tr)->CurSec)->SecCode");
+	break;
+     case M_Qty:
+	printf("(((CDeal*)tr)->Qty)");
+	break;
+     default:
+        printf("tr");
+    }
 }
 
 static double
@@ -369,9 +424,9 @@ callbuiltin(struct fncall *f)
    printf("= %4.4g\n", v);
    return v;
  case B_agg:
-    printf("agg(");
+   /* printf("agg(");
     eval(f->l);
-    printf(")");
+    printf(")");*/
     break;
  case B_mov:
     printf("moving(");
@@ -387,6 +442,35 @@ callbuiltin(struct fncall *f)
    yyerror("Unknown built-in function %d", functype);
    return 0.0;
  }
+}
+
+static void 
+print_func(struct numval* funcnum) 
+{
+  switch((int)funcnum->number) {
+	case F_min:
+ 	    printf("MIN");
+	    break;
+        case F_max:
+	    printf("MAX");
+	    break;
+        default:
+	    printf("");
+  }
+}
+
+static void
+callaggfunc(struct agg *a)
+{
+    printf("[&tr]() -> double\n{\n");
+    printf("\tstatic std::unordered_map<std::string, std::vector<double>> groups;\n");
+    printf("\n\n\tstd::stringstream streamGroupKeys;");
+    printf("\n\tstreamGroupKeys << std::string("); eval(a->l); printf(");\n");
+    printf("\n\tauto metricId = streamGroupKeys.str();\n");
+    printf("\n\tif (gIt == groups.end())");
+    printf("\n\t\tgroups[metricId] = std::vector<double>();\n");
+    printf("\n\tgroups[metricId].push_back(static_cast<double>"); eval(a->r); printf(")\n");
+    printf("\n\treturn "); print_func( (struct numval*)(a->funcnum) ); printf("(groups[metricId]"); printf(");\n}");
 }
 
 static double
@@ -474,7 +558,7 @@ treefree(struct ast *a)
   case '*':
   case '/':
   case ':':
-  case '1':  case '2':  case '3':  case '4':  case '5':  case '6':
+  case '1':  case '2':  case '3':  case '4':  case '5':  case '6': case 'A':
   case 'L':
     treefree(a->r);
 
