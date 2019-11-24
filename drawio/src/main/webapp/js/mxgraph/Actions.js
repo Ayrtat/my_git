@@ -25,7 +25,7 @@ Actions.prototype.init = function()
 	};
 
 	// File actions
-	//this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
+	this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
 	this.addAction('open...', function()
 	{
 		window.openNew = true;
