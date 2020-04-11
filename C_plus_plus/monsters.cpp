@@ -5,12 +5,6 @@
 #include <map>
 #include <vector>
 
-
-#include <iostream>
-#include <algorithm>
-#include <map>
-#include <vector>
-
 int main() {
     int input_health[] = { 7, 2, 5 };
     int input_damage[] = { 15, 14, 3 };
