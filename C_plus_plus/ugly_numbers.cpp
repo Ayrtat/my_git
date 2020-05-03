@@ -11,7 +11,6 @@
 bool checkOnPrimaries(int num)
 {
     std::vector<int> divisors = {2, 3, 5};
-    
     while(num)
     {
         auto exists = false;
@@ -47,8 +46,7 @@ int uglyNumber(int n)
         case 5:
             return 5;
     }
-    
-    
+  
     int previousUgly = uglyNumber(n - 1);
     auto nextConvinient = previousUgly + 1;
     
