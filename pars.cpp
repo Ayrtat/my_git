@@ -108,18 +108,47 @@ namespace example
       }
    };
 
+   struct rearrangeFunctionCall : parse_tree::apply< rearrangeFunctionCall >
+   {
+      template< typename Node, typename... States >
+      static void transform( std::unique_ptr< Node >& n, States&&... st )
+      {
+         /*
+         Own custom.
+         I don't want functionCall node to be showed in parsing tree because instead 
+         I can put there a function name and from this function name there can be ramification on parameters
+         
+         */
+         if( n->children.size() == 1 ) {
+            n = std::move( n->children.back() );
+         }
+         else {
+            n->remove_content();
+            auto& c = n->children;
+
+            auto newNode = std::move( c.front() );
+            while( n->children.size() > 1) {
+               newNode->children.push_back( std::move( c.back() ) );
+               c.pop_back();
+            }
+
+            n = std::move( newNode );
+         }
+      }
+   };
+
    // select which rules in the grammar will produce parse tree nodes:
 
    template< typename Rule >
    using selector = parse_tree::selector<
       Rule,
       parse_tree::store_content::on<
-         StringObject,
+         StringObject, 
          integer,
          variable >,
       parse_tree::remove_content::on<
          plus, minus, multiply, divide,
-         functionCall,
+        // functionCall,
          TradeSumm, TradePrice, InstrPriceOfPreviousTrade,
          ToStringFunctionStringName,
          ModuleFunctionStringName,
@@ -127,7 +156,8 @@ namespace example
         // PrefixAndMetric,
          less, more, lessOrEqual, moreOrEqual, notEqual, equal
          >,
-      rearrange::on<
+      rearrangeFunctionCall::on<functionCall>,
+      rearrange::on< //functionCall,
          product,
          expression > >;
 
@@ -200,7 +230,7 @@ int main(  )
 {
    setlocale( LC_ALL, "RUS" );
   char* argv1[] = {
-       "СТР(Сделка:Цена, 4) + (\"Comment\"+(МОДУЛЬ(Сделка:Цена - Инстр:ЦенаПредпослСделки) / Инстр:ЦенаПредпослСделки * 100 >= 0) > (Сделка:Сумма >= 0))" };
+       "СТР(МОДУЛЬ(Сделка:Цена), 4) + (\"Comment\"+(МОДУЛЬ(Сделка:Цена - Инстр:ЦенаПредпослСделки) / Инстр:ЦенаПредпослСделки * 100 >= 0) > (Сделка:Сумма >= 0))" };
    argv_input in( argv1, 0 );
    try {
       const auto root = parse_tree::parse< example::grammar, example::node, example::selector >( in );
