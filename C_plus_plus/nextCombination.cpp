@@ -34,8 +34,8 @@ bool nextCombination(InputIt begin,
 	/*Looking for this element here*/
 
 	while ((viewed_element_it != reversed_begin) && (*viewed_element_it >= toElement -
-													  lengthOfSubsequence + 
-													  std::distance(viewed_element_it, reversed_begin))) {
+									       lengthOfSubsequence + 
+									       std::distance(viewed_element_it, reversed_begin))) {
 		viewed_element_it++;
 	}
 
