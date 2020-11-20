@@ -8,8 +8,8 @@
 
 template<typename InputIt, typename T>
 bool nextCombination(InputIt begin,
-					 InputIt end,
-					 T toElement) {
+		     InputIt end,
+		     T toElement) {
 	/*
 		Given sequence: 1 2 3 4 5
 		Final sequence: 6 7 8 9 10
