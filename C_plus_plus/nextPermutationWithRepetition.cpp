@@ -11,8 +11,8 @@
 template<typename InputIt, typename T>
 bool nextPermutationWithRepetition(InputIt begin, InputIt end, T from_value, T to_value) {
 	auto it = std::find_if_not(std::make_reverse_iterator(end),
-							   std::make_reverse_iterator(begin),
-							   [&to_value](auto current) { return to_value == current; });
+				   std::make_reverse_iterator(begin),
+				   [&to_value](auto current) { return to_value == current; });
 
 	if (it == std::make_reverse_iterator(begin))
 		return false;
