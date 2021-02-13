@@ -7,19 +7,19 @@
 #include <type_traits>
 
 template<typename... Ts>
-struct ClassMapper;
+struct type_mapper;
 
 template<>
-struct ClassMapper<>
+struct type_mapper<>
 {
 	static void mapTo(...);
 };
 
 template<typename T, typename... Ts>
-struct ClassMapper<T, Ts...> : ClassMapper<Ts...>
+struct type_mapper<T, Ts...> : type_mapper<Ts...>
 {
 	static typename T::second_type mapTo(typename T::first_type);
-	using ClassMapper<Ts...>::mapTo;
+	using type_mapper<Ts...>::mapTo;
 };
 
 template<typename T, typename MapperT>
@@ -33,7 +33,7 @@ using get_type_on_mapping = typename GetTypeOnMap<T, MapperT>::type;
 
 int main(void)
 {
-	using mapper = ClassMapper <  
+	using mapper = type_mapper <  
 		std::pair<int, double>,
 		std::pair<double, int>,
 		std::pair<float, std::string>>;
