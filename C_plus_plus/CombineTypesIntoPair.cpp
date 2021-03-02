@@ -17,9 +17,9 @@ struct CombineTypesIntoPairsImpl<T1, Nil> {};
 
 template<typename T, typename... Ts>
 struct CombineTypesIntoPairs : CombineTypesIntoPairsImpl<Ts, T>...,
-							   CombineTypesIntoPairsImpl<T, Ts>...,
-							   CombineTypesIntoPairsImpl<T, T>,
-							   CombineTypesIntoPairs<Ts...> {};
+			       CombineTypesIntoPairsImpl<T, Ts>...,
+			       CombineTypesIntoPairsImpl<T, T>,
+			       CombineTypesIntoPairs<Ts...> {};
 
 template<typename T>
 struct CombineTypesIntoPairs<T> : CombineTypesIntoPairsImpl<T, T> {};
