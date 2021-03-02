@@ -1,8 +1,5 @@
 #include <iostream>
 
-template<>
-struct TypeCombiner<Nil> {};
-
 template<typename first_type, typename second_type>
 struct CombineTypesIntoPairsImpl
 {
@@ -11,9 +8,6 @@ struct CombineTypesIntoPairsImpl
 		std::cout << "Pair of types:\t" << typeid(first_type).name() << " and " << typeid(second_type).name() << std::endl;
 	}
 };
-
-template<typename T1>
-struct CombineTypesIntoPairsImpl<T1, Nil> {};
 
 template<typename T, typename... Ts>
 struct CombineTypesIntoPairs : CombineTypesIntoPairsImpl<Ts, T>...,
