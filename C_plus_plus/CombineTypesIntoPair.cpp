@@ -18,7 +18,6 @@ struct CombineTypesIntoPairs : CombineTypesIntoPairsImpl<Ts, T>...,
 template<typename T>
 struct CombineTypesIntoPairs<T> : CombineTypesIntoPairsImpl<T, T> {};
 
-
 int main()
 {
 	CombineTypesIntoPairs<int, double, char, const char*> tc;
